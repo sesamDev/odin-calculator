@@ -1,15 +1,19 @@
 //Global variables
+const displayContent = document.querySelector('#display');
 const operator = {
     "/": "divide",
-    "X": "multiply",
+    "x": "multiply",
     "-": "subtract",
     "+": "add",
 }
 let userInput = '';
-let selectedOperator = null;
-let key = '';
+let operatorSelected = null;
+let operatorKey = '';
+let total = 0;
+let firstNumEntered = 5; //Stores the first number entered before an operator is pressed.
+let secondNumEntered = 2; //Stores the second number entered before an operator is pressed.
 
-
+//#region Basic math functions.
 //Math operator functions
 let operatorPressed = false;
 
@@ -28,29 +32,30 @@ function multiply(n1, n2){
 function divide(n1, n2){
     return n1 / n2;
 }
+//#endregion
 
 function operate(key){
-    switch (operator[key]) {
+    let chosenOperator = key;
+    let sum = 0;
+    switch (operator[chosenOperator]) {
         case "divide":
-            divide(firstNumEntered, secondNumEntered); 
+            sum = divide(firstNumEntered, secondNumEntered); 
             break;
         case "multiply":
-            multiply(firstNumEntered, secondNumEntered); 
+            sum = multiply(firstNumEntered, secondNumEntered); 
             break;
         case "subtract":
-            subtract(firstNumEntered, secondNumEntered); 
+            sum = subtract(firstNumEntered, secondNumEntered); 
             break;
         case "add":
-            add(firstNumEntered, secondNumEntered); 
+            sum = add(firstNumEntered, secondNumEntered); 
             break;
     }
+    return total = sum;
 }
 
 
 //Display which button user pressed
-const displayContent = document.querySelector('#display');
-let firstNumEntered = 5; //Stores the first number entered before an operator is pressed.
-let secondNumEntered = 2; //Stores the second number entered before an operator is pressed.
 
 function populateDisplay(char){
     displayContent.textContent += char;
@@ -60,15 +65,20 @@ function storeInput(char){
     userInput += char;
 }
 
-function clear(){
+function clearAll(){
     displayContent.textContent = '';
     userInput = '';
 }
 
+function clearDisplay(){
+    displayContent.textContent = '';
+}
+
 function chosenOperator(userInput){
     let inputArray = Array.from(userInput);
-    const operator = inputArray.filter(item => item == 'X' || item == '+' || item == '-' || item == '/');
-    return operator;
+    const operator = inputArray.filter(item => item == 'x' || item == '+' || item == '-' || item == '/');
+    operator.join(""); //Make string from array;
+    return operatorKey = operator;
 }
 
 function inputStringToInt(input){
@@ -77,7 +87,7 @@ function inputStringToInt(input){
     console.log(inputArray);
 
     inputArray.forEach((item) => { //Loops through every item in the array and finds the index of the operator.
-        if(item == 'X' || item == '+' || item == '-' || item == '/'){
+        if(item == 'x' || item == '+' || item == '-' || item == '/'){
             return indexOfOper = inputArray.indexOf(item);
         };
     });
@@ -94,16 +104,32 @@ const buttons = document.querySelectorAll('button');
 
 //Button click function for event listener.
 function clickButton(e = new Event()){
-    let buttonClicked = e.target.innerText;
-    if(buttonClicked == "C"){
-        clear();
+    let btnClicked = e.target.innerText;
+    if(btnClicked == "C"){
+        clearAll();
         return;
     }
-    if(buttonClicked == "="){
-        console.log(operate(buttonClicked));
+    if(btnClicked == "="){
+        chosenOperator(userInput); //Find operator chosen.
+        inputStringToInt(userInput); //Find first and second set of numbers
+        console.log(operate(operatorKey)); //calculate based on above.
+        clearAll();                    //Clear the display to only show sum;
+        populateDisplay(total); //Show the sum on the display.
+        return;
     }
-    populateDisplay(buttonClicked);
-    storeInput(buttonClicked);
+    if(btnClicked == 'x' || btnClicked == '+' || btnClicked == '-' || btnClicked == '/'){
+        operatorSelected = true;
+        storeInput(btnClicked);
+    }else if(operatorSelected){
+        clearDisplay();
+        populateDisplay(btnClicked);
+        storeInput(btnClicked);
+        operatorSelected = false;
+    }else{
+        populateDisplay(btnClicked);
+        storeInput(btnClicked);
+    }
+    console.log(btnClicked != 'x' || btnClicked != '+' || btnClicked != '-' || btnClicked != '/')
 }
 buttons.forEach(button => {
     button.addEventListener('click', clickButton);
