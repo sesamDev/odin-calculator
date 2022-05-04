@@ -11,26 +11,29 @@
 <body>
     <div class="calc-container">
         <div class="calculator">
-            <div id="display"></div>
-            <button class="button clear">C</button>
+            <div id="display" data-output>
+                <div id="previous-operand" data-previous-operand>456</div>
+                <div id="current-operand" data-current-operand>456</div>
+            </div>
+            <button class="button clear" data-clear="">C</button>
             <button class="button tbd">?</button>
             <button class="button tbd">?</button>
-            <button class="button operator">/</button>
-            <button class="button number">7</button>
-            <button class="button number">8</button>
-            <button class="button number">9</button>
-            <button class="button operator">x</button>
-            <button class="button number">4</button>
-            <button class="button number">5</button>
-            <button class="button number">6</button>
-            <button class="button operator">-</button>
-            <button class="button number">1</button>
-            <button class="button number">2</button>
-            <button class="button number">3</button>
-            <button class="button operator">+</button>
-            <button class="button number" id="zero">0</button>
-            <button class="button comma">.</button>
-            <button class="button equal">=</button>
+            <button class="button operator" data-operator>/</button>
+            <button class="button number" data-number>7</button>
+            <button class="button number" data-number>8</button>
+            <button class="button number" data-number>9</button>
+            <button class="button operator" data-operator>x</button>
+            <button class="button number" data-number>4</button>
+            <button class="button number" data-number>5</button>
+            <button class="button number" data-number>6</button>
+            <button class="button operator" data-operator>-</button>
+            <button class="button number" data-number>1</button>
+            <button class="button number" data-number>2</button>
+            <button class="button number" data-number>3</button>
+            <button class="button operator" data-operator>+</button>
+            <button class="button number" id="zero" data-number>0</button>
+            <button class="button number" data-number>.</button>
+            <button class="button equal" data-equal>=</button>
         </div>
     </div>
 </body>

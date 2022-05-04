@@ -1,36 +1,66 @@
 //Global variables
+let currentSelection = '';
+let previousSelection = '';
+let currentOperator = undefined;
+let previousOperator = undefined;
+let total = undefined;
 
-const operator = {
-    "/": "divide",
-    "x": "multiply",
-    "-": "subtract",
-    "+": "add",
-}
-let userInput = '';
-let operatorSelected = null;
-let operatorKey = '';
-let total = 0;
-let numberInput = 0;
-let firstNumEntered = 0; //Stores the first number entered before an operator is pressed.
-let secondNumEntered = 0; //Stores the second number entered before an operator is pressed.
-let previousTotal = 0;
-
-const displayContent = document.querySelector('#display');
-const numberButtons = document.querySelectorAll('.button.number')
-const operatorButtons = document.querySelectorAll('button.operator')
-const equalsButton = document.querySelector('button.equal')
-const clearButton = document.querySelector('button.clear')
-const pointButton = document.querySelector('pointBtn')
+const currentOperand = document.querySelector('[data-current-operand]');
+const previousOperand = document.querySelector('[data-previous-operand]');
+const numberButtons = document.querySelectorAll('[data-number')
+const operatorButtons = document.querySelectorAll('[data-operator]')
+const equalsButton = document.querySelector('[data-equal]')
+const clearButton = document.querySelector('[data-clear]')
+clearAll();
 
 numberButtons.forEach(button => {
-    button.addEventListener('click', clickNumberBtn);
+    button.addEventListener('click', () => {
+        const input = button.textContent;
+        appendNumber(input);
+    });
 });
 operatorButtons.forEach(button => {
-    button.addEventListener('click', clickOperatorBtn);
+    button.addEventListener('click', () => {
+        if(previousSelection != '' && currentSelection != ''){
+            previousSelection = operate();
+            currentSelection = ''
+            currentOperator = button.textContent;
+            updateDisplay();
+            return;
+        }
+        if(previousSelection != '' && currentSelection == ''){
+            return;
+        }
+        currentOperator = button.textContent;
+        if(previousSelection != ''){
+             previousSelection = operate(currentOperator);
+             updateDisplay();
+             currentSelection = '';
+             updateDisplay();
+             return
+        }
+        previousSelection = currentSelection;
+        currentSelection = '';
+
+        updateDisplay();
+    });
 });
-equalsButton.addEventListener('click', clickEqualsBtn);
+equalsButton.addEventListener('click', ()=>{
+    if(currentSelection === '') return;
+    if(previousSelection === '') return;
+    if(currentSelection === "0" || previousSelection === "0" && currentOperator === "/"){
+        currentSelection = "You can't divide by 0...";
+        previousSelection = "'"
+        updateDisplay();
+        return;
+    }
+    currentSelection = operate().toString();
+    previousSelection = '';
+    updateDisplay();
+
+});
 clearButton.addEventListener('click', clearAll);
-//pointButton.addEventListener('click', clickPointBtn);
+
 
 //#region Basic math functions.
 //Math operator functions
@@ -49,154 +79,52 @@ function multiply(n1, n2){
 }
 
 function divide(n1, n2){
-    if(n1 == 0 || n2 == 0){
-        return "Error, idiot..."
-    }else return n1 / n2;
+    return n2 / n1;
 }
 //#endregion
 
-function operate(key){
-    let chosenOperator = key;
+function operate(){
+    const _currentSelection = parseFloat(currentSelection);
+    const _previousSelection = parseFloat(previousSelection);
     let sum = 0;
-    switch (chosenOperator) {
+    switch (currentOperator) {
         case "/":
-            sum = divide(firstNumEntered, secondNumEntered); 
+            total = divide(_currentSelection, _previousSelection); 
             break;
         case "x":
-            sum = multiply(firstNumEntered, secondNumEntered); 
+            total = multiply(_currentSelection, _previousSelection); 
             break;
         case "-":
-            sum = subtract(firstNumEntered, secondNumEntered); 
+            total = subtract(_currentSelection, _previousSelection); 
             break;
         case "+":
-            sum = add(firstNumEntered, secondNumEntered); 
+            total = add(_currentSelection, _previousSelection); 
             break;
     }
-    return total = sum;
+    return Math.round(total * 1000) / 1000;
 }
 
 //Display which button user pressed
 
-function populateDisplay(char){
-    displayContent.textContent += char;
-    console.log({firstNumEntered})
-    console.log({secondNumEntered})
+function appendNumber(_input){
+    if(currentSelection.includes(".") && _input === ".") return;
+    currentSelection += _input;
+    updateDisplay();
 }
 
-function storeInput(char){
-    userInput += char;
+function updateDisplay(){
+
+    previousOperand.textContent = previousSelection;
+    currentOperand.textContent = currentSelection;
 }
+
 
 function clearAll(){
-    displayContent.textContent = '';
-    userInput = '';
+    currentSelection = '';
+    previousSelection = '';
+    currentOperator = undefined;
+    previousOperator = undefined;
+    total = undefined;
+    updateDisplay(currentSelection)
+
 }
-
-function clearDisplay(){
-    displayContent.textContent = '';
-}
-
-function clickNumberBtn(e=new Event()){
-    const btn = e.target.textContent;
-    populateDisplay(btn);
-    userInput += btn;
-    if(operatorSelected){
-        clearDisplay();
-        populateDisplay(btn);
-        operatorSelected = false;
-    }
-}
-
-function clickOperatorBtn(e=new Event()){
-    const btn = e.target.textContent;
-    if(firstNumEntered != 0){
-        firstNumEntered = total;
-    }
-    firstNumEntered = stringToInt(userInput);
-    //secondNumEntered = stringToInt(userInput.substring(firstNumEntered))
-    operatorSelected = true;
-    operatorKey = btn;
-
-    }
-}
-
-function clickEqualsBtn(e=new Event()){
-    const btn = e.target.textContent;
-    secondNumEntered = stringToInt(userInput.substring(firstNumEntered.toString().length))
-    operate(operatorKey);
-    clearDisplay();
-    populateDisplay(total);
-    userInput = '';
-}
-
-function stringToInt(input){
-    return Number(input);
-    // let inputArray = Array.from(input);
-    // let indexOfOper = null;
-    // console.log(inputArray);
-
-    // inputArray.forEach((item) => { //Loops through every item in the array and finds the index of the operator.
-    //     if(item == 'x' || item == '+' || item == '-' || item == '/'){
-    //         return indexOfOper = inputArray.indexOf(item);
-    //     };
-    // });
-
-    // let output1 = inputArray.slice(0,indexOfOper).join(""); //Slice out and join the numbers leading up to the oper.
-    // let output2 = inputArray.slice(indexOfOper+1).join(""); //Slice out and join the numbers from oper to end.
-
-    // return firstNumEntered = +output1, secondNumEntered = +output2;
-};
-
-
-//Add eventlistner to buttons.
-// const buttons = document.querySelectorAll('button');
-
-//Button click function for event listener.
-// function clickButton(e = new Event()){
-//     const btnClicked = e.target.innerText;
-//     const btnClass = e.
-
-//     // if(btnClicked == "C"){
-//     //     clearAll();
-//     //     return;
-//     // }
-//     // if(btnClicked == "="){
-//     //     chosenOperator(userInput); //Find operator chosen.
-//     //     inputStringToInt(userInput); //Find first and second set of numbers
-//     //     console.log(operate(operatorKey)); //calculate based on above.
-//     //     clearAll();                    //Clear the display to only show sum;
-//     //     populateDisplay(total); //Show the sum on the display.
-//     //     return;
-//     // }
-//     // if(btnClicked == 'x' || btnClicked == '+' || btnClicked == '-' || btnClicked == '/'){
-//     //     operatorSelected = true;
-//     //     storeInput(btnClicked);
-//     // }else if(operatorSelected){
-//     //     clearDisplay();
-//     //     populateDisplay(btnClicked);
-//     //     storeInput(btnClicked);
-//     //     operatorSelected = false;
-//     // }else{
-//     //     populateDisplay(btnClicked);
-//     //     storeInput(btnClicked);
-//     // }
-    
-//     // btnClicked = null;
-
-//     switch (btnClicked) {
-//         case btnClicked === "C":
-//             clearAll()
-//             break;
-//         case btnClicked === "=":
-//             //Do something
-//             break;
-//         case btnClicked === 'x' || btnClicked === '+' || btnClicked === '-' || btnClicked === '/':
-//             operatorSelected = true;
-//             //Store the operator
-//         case 
-//         default:
-//             break;
-//     }
-
-
-// }

@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-body{
-    font-size: 20px;
+*, *::before, *::after {
     font-family: 'Roboto', sans-serif;
     color: rgb(243, 243, 243);
+    font-weight: normal;
 }
 .calc-container {
     display: flex;
@@ -15,32 +15,38 @@ body{
     background-color: rgb(80, 80, 80);
 }
 .calculator{
-    box-sizing: content-box;
     display: grid;
     grid-template-columns: repeat(4, 150px);
-    grid-template-rows: repeat(7, 100px);
+    grid-template-rows: minmax(120px, auto) repeat(5, 100px);
     border: 6px solid black;
     border-radius: 10px;
     height: 700px;
     width: 600px;
     background-color: rgb(15, 15, 15);
 }
-.calculator > #display{
-    box-sizing: border-box;
-    background-color: rgb(15, 15, 15);
-    height: 200px;
-    width: 600px;
-    font-size: 60px;
-    font-weight: 700;
-    grid-column-start: 1;
-    grid-column-end: 5;
-    grid-row-start: 1;
-    grid-row-end: 3;
+
+#display {
+    grid-column: 1 / -1;
+    background-color: rgba(0, 0, 0, .75);
     display: flex;
-    justify-content: flex-end;
     align-items: flex-end;
-    
-}
+    justify-content: space-around;
+    flex-direction: column;
+    padding: 10px;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+  
+  #display #previous-operand {
+    color: rgba(255, 255, 255, .75);
+    font-size: 1.5rem;
+  }
+  
+  #display #current-operand {
+    color: white;
+    font-size: 2.5rem;
+  }
+
 
 .button-container{
     width: 500px;
@@ -72,11 +78,4 @@ body{
     height: 100px;
     width: 150px;
     border-radius: 5px;
-}
-
-.clicked-operator{
-    background-color: rgb(255 230 147);
-}
-.clicked-numButton{
-    background-color: rgb(114 114 114);
 }
